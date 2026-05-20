@@ -1,0 +1,55 @@
+syntax = "proto3";
+
+package metrics;
+
+// A single point-in-time measurement from a metrics agent.
+message Metric {
+  // Metric identifier, e.g. "cpu_percent", "memory_used_bytes".
+  string name = 1;
+
+  // Numeric sample value.
+  double value = 2;
+
+  // Unix timestamp in milliseconds (UTC).
+  int64 timestamp_unix_ms = 3;
+
+  // Identifies which agent/host produced this sample.
+  string agent_id = 4;
+
+  // Optional dimensions, e.g. {"unit": "percent"} or {"mount": "/"}.
+  map<string, string> labels = 5;
+}
+
+// Agent → server: submit one or more samples in a single RPC.
+message SubmitMetricsRequest {
+  repeated Metric metrics = 1;
+}
+
+message SubmitMetricsResponse {
+  // Number of samples accepted and stored.
+  uint32 accepted_count = 1;
+}
+
+// Web → server: query stored samples (newest first unless noted).
+message GetMetricsRequest {
+  // If set, only return samples with this metric name.
+  optional string name = 1;
+
+  // If set, only return samples from this agent.
+  optional string agent_id = 2;
+
+  // Maximum number of samples to return (default applied by server if unset/zero).
+  uint32 limit = 3;
+
+  // If set, only return samples at or after this Unix time (ms, UTC).
+  optional int64 since_unix_ms = 4;
+}
+
+message GetMetricsResponse {
+  repeated Metric metrics = 1;
+}
+
+service MetricsService {
+  rpc SubmitMetrics(SubmitMetricsRequest) returns (SubmitMetricsResponse);
+  rpc GetMetrics(GetMetricsRequest) returns (GetMetricsResponse);
+}

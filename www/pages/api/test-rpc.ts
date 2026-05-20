@@ -3,10 +3,9 @@ import * as grpc from '@grpc/grpc-js';
 import * as protoLoader from '@grpc/proto-loader';
 import { promisify } from 'util';
 import path from 'path';
+import { grpcServerTarget, protoRoot } from '../../lib/grpc';
 
-// Get the proto file path relative to the project root
-// process.cwd() in Next.js API routes is the www directory, so we need to go up one level
-const PROTO_PATH = path.resolve(process.cwd(), '../proto/test/test.proto');
+const PROTO_PATH = path.join(protoRoot(), 'test/test.proto');
 
 const packageDefinition = protoLoader.loadSync(PROTO_PATH, {
   keepCase: true,
@@ -41,7 +40,7 @@ export default async function handler(
 
   try {
     const client = new test.Test(
-      '127.0.0.1:3001',
+      grpcServerTarget(),
       grpc.credentials.createInsecure()
     ) as TestClient;
 

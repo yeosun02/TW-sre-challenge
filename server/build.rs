@@ -3,7 +3,10 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         .build_server(true)
         .build_client(false)
         .compile(
-            &["../proto/test/test.proto"],
+            &[
+                "../proto/test/test.proto",
+                "../proto/metrics/metrics.proto",
+            ],
             &["../proto"],
         )?;
     Ok(())
