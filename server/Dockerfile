@@ -1,12 +1,12 @@
 # Build context: repository root (docker build -f server/Dockerfile .)
-FROM rust:1.83-bookworm AS builder
+# Use current stable Rust (1.83 is too old for some crate releases in 2026).
+FROM rust:bookworm AS builder
 WORKDIR /build
-RUN apt-get update && apt-get install -y --no-install-recommends protobuf-compiler \
-    && rm -rf /var/lib/apt/lists/*
 COPY proto ./proto
 COPY server ./server
 WORKDIR /build/server
-RUN cargo build --release
+# -j 1 reduces memory use in Codespaces; --locked needs Cargo.lock in repo
+RUN cargo build --release --locked -j 1
 
 FROM debian:bookworm-slim
 RUN apt-get update && apt-get install -y --no-install-recommends ca-certificates \

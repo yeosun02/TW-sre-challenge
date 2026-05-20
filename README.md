@@ -155,15 +155,14 @@ Open **http://127.0.0.1:3001**.
 
 ## Troubleshooting
 
-### `docker: command not found` (macOS)
+### `cargo build` / `edition2024` / `getrandom` in Docker (Codespaces)
 
-Add Docker Desktop’s CLI to your PATH in `~/.zshrc`:
+The server image uses **`rust:bookworm`** (current stable) and a committed **`server/Cargo.lock`** so dependency versions stay compatible. If you still see stale build errors after pulling, run:
 
 ```bash
-export PATH="/Applications/Docker.app/Contents/Resources/bin:$PATH"
+docker compose build --no-cache metrics-server
+docker compose up
 ```
-
-Open **Docker Desktop** until it shows **Running**, then run `docker version`.
 
 ### Dashboard shows “No metrics yet”
 
