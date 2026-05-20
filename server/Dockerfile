@@ -3,9 +3,9 @@
 FROM rust:bookworm AS builder
 WORKDIR /build
 COPY proto ./proto
+# Cargo.lock must be committed (see server/.gitignore — do not ignore it)
 COPY server ./server
 WORKDIR /build/server
-# -j 1 reduces memory use in Codespaces; --locked needs Cargo.lock in repo
 RUN cargo build --release --locked -j 1
 
 FROM debian:bookworm-slim
